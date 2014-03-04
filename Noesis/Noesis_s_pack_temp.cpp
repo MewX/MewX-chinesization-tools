@@ -286,7 +286,7 @@ int main( int argc, char **argv )
                         insert_len = (unsigned char)tempContent[ index ++ ];
                         if( !insert_len ) continue;
                         index += 2;
-                        ////////////////////////////////////////////////
+                        ////////////////////////////////////////////////////////////
                         //tempLineStc = "[";
                         //tempLineStc += (char *)&temp[ index ];
                         //tempLineStc += "]";
@@ -297,7 +297,7 @@ int main( int argc, char **argv )
                         type = '2';
                         insert_len = (unsigned char)tempContent[ index ++ ];
                         if( !insert_len ) continue;
-                        ///////////////////////////////////////////////
+                        ////////////////////////////////////////////////////////////
                         //tempLineStc = (char *)&temp[ index ];
                         break;
                     }
@@ -310,7 +310,7 @@ int main( int argc, char **argv )
                     
                     insert_len = (unsigned char)tempContent[ index ++ ];
                     if( !insert_len ) continue;
-                    //////////////////////////////////////////////////////
+                    ////////////////////////////////////////////////////////////
                     //tempLineStc = (char *)&temp[ index ];
                     break;
                 }
@@ -323,7 +323,7 @@ int main( int argc, char **argv )
                     insert_len = (int)( *(unsigned short *)&tempContent[ index ] );
                     if( !insert_len ) continue;
                     index += 2 + 4;
-                    ///////////////////////////////////////////////////////
+                    ////////////////////////////////////////////////////////////
                     //tempLineStc = (char *)&temp[ index ];
                     //tempLineStc = tempLineStc.substr( 0, Cho_len );
                     break;
@@ -334,15 +334,15 @@ int main( int argc, char **argv )
             
             
             /* insert */
-            //if( type == '4' )
-            //    for( int m = 0; m < insert_len; m ++ ) tempContent[ index + m ] = '\0';
-            //else
-            //    for( int m = 0; m < insert_len && tempContent[ m ] != '\0'; m ++ )
-            //        tempContent[ index + m ] = '\0';
+            if( type == '4' )
+                for( int m = 0; m < insert_len; m ++ ) tempContent[ index + m ] = '\0';
+            else
+                for( int m = 0; m < insert_len && tempContent[ index + m ] != '\0'; m ++ )
+                    tempContent[ index + m ] = '\0';
             
             if( type == '3' ) {
                 for( int y = 0; y < wstr.length( ); y ++ )
-                    if( wstr[ y ] == L'＄' ) wstr[ y ] = L'亹';
+                    if( wstr[ y ] == L'＄' ) wstr[ y ] = L'亹'; // Msg
             }
             
             if( hasName ) {
@@ -358,9 +358,10 @@ int main( int argc, char **argv )
                 }
             }
             
-            const int delta = index + insert_len;
+            //const int delta = index + insert_len;
             int j;
-            for( j = 0; j < str.length( ) && index + j < delta - 1; j ++ ) {
+            for( j = 0; j < str.length( ) && tempContent[ index + j ] == '\0' && tempContent[ index + j + 1 ] == '\0' ; j ++ ) {
+                // index + j < delta - 1
                 if( str[ j ] == ' ' ) { // Space is special
                     tempContent[ index + j ] = 0xA1;
                     tempContent[ ( ++ index ) + j ] = 0xA1;
@@ -375,7 +376,7 @@ int main( int argc, char **argv )
                     tempContent[ index + j ] = str[ j ];
                 }
             }
-            if( type != '4' ) tempContent[ index + j - 2 ] = '\0';
+            //if( type != '4' ) tempContent[ index + j - 2 ] = '\0';
             index += j;
             
             if( hasName ) {
