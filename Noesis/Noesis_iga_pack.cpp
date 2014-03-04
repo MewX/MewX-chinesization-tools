@@ -22,9 +22,9 @@ using namespace std;
  *  FileNameList_len * 1
  *  FileName         * n
  *  FileContent      * n
- */
+ **/
 
- 
+
 typedef struct IGAHDR {
   char Sign[ 4 ]; // "IGA0"
   unsigned long unknown1; // May filename_offset?  database_offset? file_count? header_size? Checksum?
