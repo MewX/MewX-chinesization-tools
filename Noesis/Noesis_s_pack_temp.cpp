@@ -14,6 +14,7 @@
 #include <string>
 #include <cstdio>
 #include <Windows.h>
+#include <conio.h>
 #include "EasyUnicodeFileLE.h"
 
 using namespace std;
@@ -80,6 +81,7 @@ int main( int argc, char **argv )
     
     
     /* Debug all: through comparing line1 to line2 */
+    cout << "Debuging texts...";
     logFile << "Starting debug-process:" << endl
             << "  For more info, refer the debug log file." << endl;
     
@@ -174,6 +176,8 @@ int main( int argc, char **argv )
                 
                 line1 = L"";
                 line2 = L"";
+                name1 = L"";
+                name2 = L"";
             }
             else {
                 debugFile << "  (line: " << lnCount << ") ERR0005 - I don't know what just happened!" << endl;
@@ -186,11 +190,22 @@ int main( int argc, char **argv )
         debugFile << "File closed." << endl << endl;
     }
     
+    cout << "...done!" << endl;
     logFile << "Debug finished!" << endl << endl;
     if( hasBug ) {
-        logFile << "Due to bugs detected, program terminated!" << endl
-                << "Any puzzle? Please refer the debug log file." << endl << endl;
-        return -20;
+        cout << "Bugs were detected, continue packing? ( y/n ) - ";
+        char c = getch( );
+        if( c == 'y' || c == 'Y' ) {
+            cout << c << endl << "Continue packing...";
+            logFile << "Bugs detected! Any puzzle? Please refer the debug log file." << endl
+                    << "Packing process will still continue, errors may happen." << endl;
+        }
+        else {
+            cout << 'N' << endl << "Stopped packing." << endl;
+            logFile << "Due to bugs detected, program terminated!" << endl
+                    << "Any puzzle? Please refer the debug log file." << endl << endl;
+            return -20;
+        }
     }
     
     
@@ -343,7 +358,9 @@ int main( int argc, char **argv )
                 }
             }
             
-            for( int j = 0; j < str.length( ); j ++ ) {
+            const int delta = index + insert_len;
+            int j;
+            for( j = 0; j < str.length( ) && index + j < delta - 1; j ++ ) {
                 if( str[ j ] == ' ' ) { // Space is special
                     tempContent[ index + j ] = 0xA1;
                     tempContent[ ( ++ index ) + j ] = 0xA1;
@@ -358,8 +375,8 @@ int main( int argc, char **argv )
                     tempContent[ index + j ] = str[ j ];
                 }
             }
-            if( type != '4' ) tempContent[ index + str.length( ) ] = '\0';
-            index += str.length( );
+            if( type != '4' ) tempContent[ index + j - 2 ] = '\0';
+            index += j;
             
             if( hasName ) {
                 startPos = end + 1;
@@ -377,6 +394,7 @@ int main( int argc, char **argv )
         logFile << "File closed." << endl << endl;
     }
     
+    cout << "...done!" << endl;
     logFile << "All processes done!" << endl;
 
     /* CLean memory */
