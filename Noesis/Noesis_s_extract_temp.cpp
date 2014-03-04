@@ -45,7 +45,7 @@ int main( int argc, char **argv )
     fstream file;
     char *temp;
     unsigned int FileLen = 0;
-	wstring Header = L"// 文件上面一行作为参照，下面一行进行修改，两个斜杠代表注释，就像本句\r\n\r\n";
+    wstring Header = L"// 文件上面一行作为参照，下面一行进行修改，两个斜杠代表注释，就像本句\r\n\r\n";
 
 
     /* Read file */
@@ -59,7 +59,7 @@ int main( int argc, char **argv )
 
     file.open( argv[ 2 ], ios::out | ios::trunc | ios::binary );     // For write
     file.write( "\xFF\xFE", 2 ); // Unicode file header
-	file.write( (char *)Header.c_str( ), Header.length( ) * 2 );
+    file.write( (char *)Header.c_str( ), Header.length( ) * 2 );
 
 
     /* Match tables ( Not Safe! ) */
@@ -91,8 +91,8 @@ int main( int argc, char **argv )
     const unsigned int tabShowWord_len = 3;
     const char tabShowEmail[ 4 ] = "\x3F\x04\x00";
     const unsigned int tabShowEmail_len = 3;
-	const char tabShowLoadGoto[ 3 ] = "\x1D\x08";
-	const unsigned int tabShowLoadGoto_len = 2;
+    const char tabShowLoadGoto[ 3 ] = "\x1D\x08";
+    const unsigned int tabShowLoadGoto_len = 2;
 
 
     /* Extract */
@@ -109,9 +109,9 @@ int main( int argc, char **argv )
                 // People name
 
                 int Name_len = (unsigned char)temp[ index ++ ];
-				if( !Name_len ) continue;
-				
-				index += 2;
+                if( !Name_len ) continue;
+                
+                index += 2;
                 tempLineStc = "[";
                 tempLineStc += (char *)&temp[ index ];
                 tempLineStc += "]";
@@ -124,65 +124,65 @@ int main( int argc, char **argv )
             else {
                 // Text
                 int Text_len = (unsigned char)temp[ index ++ ];
-				if( !Text_len ) continue;
+                if( !Text_len ) continue;
                 tempLineStc = (char *)&temp[ index ];
                 index += Text_len;
-				
+                
                 char tNum[ 10 ];
                 sprintf( tNum, "%04d", countLine ++ );
-				
+                
                 if( hasName ) {
                     hasName = false;
                     LineSentence = L"●" + StringToWstring( CHARSET_DEFAULT, tNum ) + L"●" + PeopleName + StringToWstring( CHARSET_DEFAULT, tempLineStc ) + L"\r\n"
-					             + L"○" + StringToWstring( CHARSET_DEFAULT, tNum ) + L"○" + PeopleName + StringToWstring( CHARSET_DEFAULT, tempLineStc ) + L"\r\n\r\n";
+                                 + L"○" + StringToWstring( CHARSET_DEFAULT, tNum ) + L"○" + PeopleName + StringToWstring( CHARSET_DEFAULT, tempLineStc ) + L"\r\n\r\n";
                 }
                 else {
                     LineSentence = L"●" + StringToWstring( CHARSET_DEFAULT, tNum ) + L"●" + StringToWstring( CHARSET_DEFAULT, tempLineStc ) + L"\r\n"
-					             + L"○" + StringToWstring( CHARSET_DEFAULT, tNum ) + L"○" + StringToWstring( CHARSET_DEFAULT, tempLineStc ) + L"\r\n\r\n";
+                                 + L"○" + StringToWstring( CHARSET_DEFAULT, tNum ) + L"○" + StringToWstring( CHARSET_DEFAULT, tempLineStc ) + L"\r\n\r\n";
                 }
                 file.write( (char *)LineSentence.c_str( ), LineSentence.length( ) * 2 );
             }
         }
         else if( JudgeMatched( &temp[ index ], tabShowEmail_len, &tabShowEmail[ 0 ], &temp[ FileLen - 1 ] ) ) {
             // ShowEmail part
-			if( temp[ index ] != tabShowEmail[ 0 ] ) goto Next;
+            if( temp[ index ] != tabShowEmail[ 0 ] ) goto Next;
             cerr << "tabShowEmail at " << index << "; info: " << (const char *)&temp[ index + tabShowEmail_len + 1 ] << endl;
             index += tabShowEmail_len;
-			
-			int Msg_len = (unsigned char)temp[ index ++ ];
-			if( !Msg_len ) continue;
+            
+            int Msg_len = (unsigned char)temp[ index ++ ];
+            if( !Msg_len ) continue;
             tempLineStc = (char *)&temp[ index ];
-			index += Msg_len;
-			
+            index += Msg_len;
+            
             char tNum[ 10 ];
             sprintf( tNum, "%04d Msg", countLine ++ );
-			LineSentence = L"●" + StringToWstring( CHARSET_DEFAULT, tNum ) + L"●" + StringToWstring( CHARSET_DEFAULT, tempLineStc ) + L"\r\n"
-					     + L"○" + StringToWstring( CHARSET_DEFAULT, tNum ) + L"○" + StringToWstring( CHARSET_DEFAULT, tempLineStc ) + L"\r\n\r\n";
+            LineSentence = L"●" + StringToWstring( CHARSET_DEFAULT, tNum ) + L"●" + StringToWstring( CHARSET_DEFAULT, tempLineStc ) + L"\r\n"
+                         + L"○" + StringToWstring( CHARSET_DEFAULT, tNum ) + L"○" + StringToWstring( CHARSET_DEFAULT, tempLineStc ) + L"\r\n\r\n";
             file.write( (char *)LineSentence.c_str( ), LineSentence.length( ) * 2 );
-		}
+        }
         else if( JudgeMatched( &temp[ index ], tabShowLoadGoto_len, &tabShowLoadGoto[ 0 ], &temp[ FileLen - 1 ] ) ) {
-		    // Jump to script info
-			cerr << "tabShowLoadGoto at " << index << "; info: " << (const char *)&temp[ index + tabShowLoadGoto_len + 4 + 2 ] << endl;
-			index += tabShowLoadGoto_len;
-			
-			int Cho_len = (int)( *(unsigned short *)&temp[ index ] );
-			if( !Cho_len ) continue;
-			index += 2 + 4;
+            // Jump to script info
+            cerr << "tabShowLoadGoto at " << index << "; info: " << (const char *)&temp[ index + tabShowLoadGoto_len + 4 + 2 ] << endl;
+            index += tabShowLoadGoto_len;
+            
+            int Cho_len = (int)( *(unsigned short *)&temp[ index ] );
+            if( !Cho_len ) continue;
+            index += 2 + 4;
             tempLineStc = (char *)&temp[ index ];
-			tempLineStc = tempLineStc.substr( 0, Cho_len );
-			cout << "Cho_len =" << Cho_len << endl;
-			index += Cho_len;
-			
+            tempLineStc = tempLineStc.substr( 0, Cho_len );
+            cout << "Cho_len =" << Cho_len << endl;
+            index += Cho_len;
+            
             char tNum[ 10 ];
             sprintf( tNum, "%04d Cho", countLine ++ );
-			LineSentence = L"●" + StringToWstring( CHARSET_DEFAULT, tNum ) + L"●" + StringToWstring( CHARSET_DEFAULT, tempLineStc ) + L"\r\n"
-					     + L"○" + StringToWstring( CHARSET_DEFAULT, tNum ) + L"○" + StringToWstring( CHARSET_DEFAULT, tempLineStc ) + L"\r\n\r\n";
+            LineSentence = L"●" + StringToWstring( CHARSET_DEFAULT, tNum ) + L"●" + StringToWstring( CHARSET_DEFAULT, tempLineStc ) + L"\r\n"
+                         + L"○" + StringToWstring( CHARSET_DEFAULT, tNum ) + L"○" + StringToWstring( CHARSET_DEFAULT, tempLineStc ) + L"\r\n\r\n";
             file.write( (char *)LineSentence.c_str( ), LineSentence.length( ) * 2 );
-		}
-		else {
-		Next:
-		    index ++;
-		}
+        }
+        else {
+        Next:
+            index ++;
+        }
     }
 
     /* CLean memory */
