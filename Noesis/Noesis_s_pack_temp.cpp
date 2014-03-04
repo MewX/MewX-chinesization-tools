@@ -2,7 +2,7 @@
   Name: Noesis s-script packer_temp
   Copyright: MewCatcher
   Author: MewCatcher
-  Date: 09/02/14 11:22
+  Date: 03/03/14
   Description: This program is for "Cure Girl", translated words cannot be larger than source text.
   Usage: Noesis_s_pack_temp script_iga_txt script_iga_dec script_iga_redec sDebug.txt
          Noesis_s_pack_temp test_dec test_scr test_pack debug
@@ -233,7 +233,7 @@ int main( int argc, char **argv )
         txtLEFile.open( ( (string)argv[ 1 ] + "\\" + tempFileName ).c_str( ), ios::in );
         tempFileName = tempFileName.substr( 0, tempFileName.length( ) - 3 ) + "s";
         if( !txtLEFile.IsOpen( ) ) {
-            logFile << "  Didn't find " << tempFileName << ". Just copy this .s file." << endl;
+            logFile << "  Didn't find " << tempFileName.substr( 0, tempFileName.length( ) - 1 ) + "txt" << ". Just copy this .s file." << endl;
             WriteWholeFile( ( (string)argv[ 3 ] +  "\\" + tempFileName ).c_str( ), tempContent, tempContent_len );
             for( int ii = 0; ii < tempContent_len; ii ++ ) tempContent[ ii ] ^= 0xFF;
             WriteWholeFile( ( (string)argv[ 3 ] +  "_enc\\" + tempFileName ).c_str( ), tempContent, tempContent_len );
